@@ -1,32 +1,18 @@
-Microsoft (R) Macro Assembler Version 14.00.23506.0	    03/09/16 21:44:19
-0Macros, Values, and Strings    (project_06a.asm	     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.00.23506.0	    01/20/16 13:41:05
+#Program Template     (template.asm			     Page 1 - 1
 
 
-				TITLE  Macros, Values, and Strings    (project_06a.asm)
+				TITLE Program Template     (template.asm)
 
 				; Author: Alannah Oleson
 				; Email: olesona@oregonstate.edu
 				; Class number/section: CS271-001
-				; Project #6a
-				; Due date: 3/13/16
+				; Project #????
+				; Due date: ???
 				;
-				; Description:
-				;   1) Implement and test your own ReadVal and WriteVal procedures for unsigned integers.
-				;   2) Implement macros getString and displayString. The macros may use Irvine’s ReadString to get input from
-				;      the user, and WriteString to display output.
-				;        -getString should display a prompt, then get the user’s keyboard input into a memory location
-				;        -displayString should the string stored in a specified memory location.
-				;        -readVal should invoke the getString macro to get the user’s string of digits. It should then convert the
-				;             digit string to numeric, while validating the user’s input.
-				;        -writeVal should convert a numeric value to a string of digits, and invoke the displayString macro to
-				;             produce the output.
-				;   3) Write a small test program that gets 10 valid integers from the user and stores the numeric values in an
-				;       array. The program then displays the integers, their sum, and their average.
+				; Description: ???
 				;
-				; Collaborators: I used http://programming.msjc.edu/asm/help/source/irvinelib/readstring.htm to understand the Irvine 
-				;   readString procedure. I used http://stackoverflow.com/questions/13664778/converting-string-to-integer-in-masm-esi-difficulty 
-				;   to help figure out the algorithm to turn strings into numbers. And I used chapter 9 of the text to understand
-				;   how to loop through strings.
+				; Collaborators: ???
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -47,590 +33,54 @@ Microsoft (R) Macro Assembler Version 14.00.23506.0	    03/09/16 21:44:19
 			      C .LIST
 			      C 
 
-
-				;---------------------------------------------------------
-				; Macro: displayString
-				;
-				; Displays the string it is passed using writeString.
-				; Receives: the **OFFSET** of the string it's supposed to print
-				; Returns: none
-				; Requires: OFFSET is passed
-				;---------------------------------------------------------
-				displayString	MACRO	string_to_print
-					push	edx
-					mov		edx, string_to_print
-					call	writeString
-					pop		edx
-				ENDM
-
-
-				;---------------------------------------------------------
-				; Macro: getString
-				;
-				; Gets a string from the user and stores it in a memory location.
-				; Receives: address (to store the string in); length (to ensure the string isn't too long)
-				; Returns: none
-				; Requires: none
-				;---------------------------------------------------------
-				getString	MACRO	address, length
-					push	edx				;Save the registers that readString overwrites (from collab website)
-					push	ecx
-					mov		edx, address
-					mov		ecx, length
-					call	readString
-					pop		ecx
-					pop		edx
-				ENDM
-
-
-
-				;----------CONSTANTS-------------------------
-
- = 00000000			MIN = 0					;Constant for low user input
- = FFFFFFFF			MAX = 4294967295		;Constant for high user input (equal to 2^32 -1)
-
-
+				; (insert constant definitions here)
 
  00000000			.data
-
- 00000000 20 20 20 20 50	intro			BYTE	"    Project #6 - Macros, Values, and Strings   by Alannah Oleson    CS 271", 0		;The programmer introduction
-	   72 6F 6A 65 63
-	   74 20 23 36 20
-	   2D 20 4D 61 63
-	   72 6F 73 2C 20
-	   56 61 6C 75 65
-	   73 2C 20 61 6E
-	   64 20 53 74 72
-	   69 6E 67 73 20
-	   20 20 62 79 20
-	   41 6C 61 6E 6E
-	   61 68 20 4F 6C
-	   65 73 6F 6E 20
-	   20 20 20 43 53
-	   20 32 37 31 00
- 0000004B 54 68 69 73 20	how_to			BYTE	"This program tests the macros getString and displayString. It takes in 10 unsigned integers from the user, then converts them to numeric and stores them. It displays the integers as strings and calculates their sum and the average.  ", 0	  ;Instructions to use the program
-	   70 72 6F 67 72
-	   61 6D 20 74 65
-	   73 74 73 20 74
-	   68 65 20 6D 61
-	   63 72 6F 73 20
-	   67 65 74 53 74
-	   72 69 6E 67 20
-	   61 6E 64 20 64
-	   69 73 70 6C 61
-	   79 53 74 72 69
-	   6E 67 2E 20 49
-	   74 20 74 61 6B
-	   65 73 20 69 6E
-	   20 31 30 20 75
-	   6E 73 69 67 6E
-	   65 64 20 69 6E
-	   74 65 67 65 72
-	   73 20 66 72 6F
-	   6D 20 74 68 65
-	   20 75 73 65 72
-	   2C 20 74 68 65
-	   6E 20 63 6F 6E
-	   76 65 72 74 73
-	   20 74 68 65 6D
-	   20 74 6F 20 6E
-	   75 6D 65 72 69
-	   63 20 61 6E 64
-	   20 73 74 6F 72
-	   65 73 20 74 68
-	   65 6D 2E 20 49
-	   74 20 64 69 73
-	   70 6C 61 79 73
-	   20 74 68 65 20
-	   69 6E 74 65 67
-	   65 72 73 20 61
-	   73 20 73 74 72
-	   69 6E 67 73 20
-	   61 6E 64 20 63
-	   61 6C 63 75 6C
-	   61 74 65 73 20
-	   74 68 65 69 72
-	   20 73 75 6D 20
-	   61 6E 64 20 74
-	   68 65 20 61 76
-	   65 72 61 67 65
-	   2E 20 20 00
-
- 00000135  0000000A [		num_list		DWORD	10 DUP (0)		;The array to hold the user's numbers
-	    00000000
-	   ]
- 0000015D 00000001		test_list		DWORD	1, 2, 3, 4, 5, 6, 7, 8, 9, 10		;For debugging
-	   00000002
-	   00000003
-	   00000004
-	   00000005
-	   00000006
-	   00000007
-	   00000008
-	   00000009
-	   0000000A
-
- 00000185 54 6F 74 61 6C	total_msg		BYTE	"Total sum of valid numbers entered: ", 0				;Message to display for sum
-	   20 73 75 6D 20
-	   6F 66 20 76 61
-	   6C 69 64 20 6E
-	   75 6D 62 65 72
-	   73 20 65 6E 74
-	   65 72 65 64 3A
-	   20 00
- 000001AA 41 76 65 72 61	avg_msg			BYTE	"Average of valid numbers entered: ", 0					;Message to display for average
-	   67 65 20 6F 66
-	   20 76 61 6C 69
-	   64 20 6E 75 6D
-	   62 65 72 73 20
-	   65 6E 74 65 72
-	   65 64 3A 20 00
- 000001CD 45 6E 74 65 72	prompt_msg		BYTE	"Enter an unsigned integer (32 bits): ", 0				;Message to display for prompt
-	   20 61 6E 20 75
-	   6E 73 69 67 6E
-	   65 64 20 69 6E
-	   74 65 67 65 72
-	   20 28 33 32 20
-	   62 69 74 73 29
-	   3A 20 00
- 000001F3 54 68 61 74 20	error_msg		BYTE	"That isn't a valid number! Please try again.", 0		;Message to display for error
-	   69 73 6E 27 74
-	   20 61 20 76 61
-	   6C 69 64 20 6E
-	   75 6D 62 65 72
-	   21 20 50 6C 65
-	   61 73 65 20 74
-	   72 79 20 61 67
-	   61 69 6E 2E 00
- 00000220 59 6F 75 20 65	nums_msg		BYTE	"You entered these numbers: ", 0						;Message to display for nums
-	   6E 74 65 72 65
-	   64 20 74 68 65
-	   73 65 20 6E 75
-	   6D 62 65 72 73
-	   3A 20 00
- 0000023C 20 20 20 00		spaces			BYTE	"   ", 0												;Formatting
-
- 00000240 00000000		num_sum			DWORD	0				;Holder var for the sum of the numbers
- 00000244  00000020 [		out_string		BYTE	32 DUP (?)		;Holder string for the writeVal proc
-	    00
-	   ]
- 00000264  000000FF [		in_string		BYTE	255 DUP (0)		;Holder string for the readVal proc
-	    00
-	   ]
-
-
-
- 00000363 57 6F 77 2C 20	goodbye       BYTE    "Wow, that was some exciting math!! :D Bye", 0   ;Goodbye string
-	   74 68 61 74 20
-	   77 61 73 20 73
-	   6F 6D 65 20 65
-	   78 63 69 74 69
-	   6E 67 20 6D 61
-	   74 68 21 21 20
-	   3A 44 20 42 79
-	   65 00
-
-
+ 00000000 00000001		tracker		DWORD	1
+ 00000004 00000001		print_to	DWORD	1
+ 00000008 2A 00			star		BYTE	"*", 0
 
  00000000			.code
  00000000			main PROC
+
+ 00000000  B9 00000005		mov		ecx, 5
+
+ 00000005			start_loop:
+ 00000005  A1 00000004 R		mov		eax, print_to
+ 0000000A  3B 05 00000000 R		cmp		eax, tracker
+ 00000010  7C 12			jl		print_star
+
+ 00000012  A1 00000000 R		mov		eax, tracker
+ 00000017  E8 00000000 E		call	writeDec
+ 0000001C  FF 05 00000000 R		inc		tracker
+ 00000022  EB 0A			jmp		loop_cmd
+
+
+ 00000024			print_star:
+
+ 00000024  BA 00000008 R		mov		edx, OFFSET star
+ 00000029  E8 00000000 E		call	writeString
+
+ 0000002E			loop_cmd:
+ 0000002E  C7 05 00000000 R		mov		tracker, 1
+	   00000001
+ 00000038  FF 05 00000004 R		inc		print_to
+ 0000003E  E8 00000000 E		call	CrLf
+ 00000043  E2 C0			loop	start_loop
 					
- 00000000  68 0000004B R		push	OFFSET how_to
- 00000005  68 00000000 R		push	OFFSET intro
- 0000000A  E8 00000098			call	introduction
-
-					;------------Fill the array with valid input by using readVal--------------------
- 0000000F  B9 0000000A			mov		ecx, 10					;Want to get 10 valid numbers
- 00000014  BF 00000135 R		mov		edi, OFFSET num_list
-
- 00000019				begin_input_loop:
-						
-						displayString	OFFSET prompt_msg		;prompt for input
- 00000019  52		     1		push	edx
- 0000001A  BA 000001CD R     1		mov		edx, OFFSET prompt_msg
- 0000001F  E8 00000000 E     1		call	writeString
- 00000024  5A		     1		pop		edx
-
-						;Read in the string
- 00000025  68 00000264 R			push	OFFSET in_string
- 0000002A  68 000000FF				push	SIZEOF in_String
- 0000002F  E8 000000A2				call	readVal
-						
-						;Stick in the valid integer and move to the next array spot
- 00000034  A1 00000264 R			mov		eax, DWORD PTR in_string
- 00000039  89 07				mov		[edi], eax
- 0000003B  83 C7 04				add		edi, 4
-
- 0000003E  E2 D9				loop	begin_input_loop		;Until you get 10 valid values
-
-
-					;-------At this point, we've got an array with 10 valid integers, so show them to the user one by one------
-
- 00000040  B9 0000000A			mov		ecx, 10
- 00000045  BE 00000135 R		mov		esi, OFFSET num_list
-
-					;Talk to the user
- 0000004A  E8 00000000 E		call	CrLf
-					displayString	OFFSET nums_msg
- 0000004F  52		     1		push	edx
- 00000050  BA 00000220 R     1		mov		edx, OFFSET nums_msg
- 00000055  E8 00000000 E     1		call	writeString
- 0000005A  5A		     1		pop		edx
-					
- 0000005B				begin_display_loop:			;Show the 10 numbers by calling writeVal
-						
- 0000005B  8B 06				mov		eax, [esi]
- 0000005D  50					push	eax
- 0000005E  68 00000244 R			push	OFFSET out_string
- 00000063  E8 000000E3				call	writeVal
- 00000068  83 C6 04				add		esi, 4
- 0000006B  E2 EE				loop	begin_display_loop
- 0000006D  E8 00000000 E			call	CrLf
-
-					;--------Calculate the sum and the average-------------
- 00000072  68 00000240 R		push	OFFSET num_sum
- 00000077  68 00000185 R		push	OFFSET total_msg
- 0000007C  68 00000135 R		push	OFFSET num_list
- 00000081  E8 00000110			call	calcSum
-
- 00000086  FF 35 00000240 R		push	num_sum
- 0000008C  68 000001AA R		push	OFFSET avg_msg
- 00000091  E8 0000013F			call	calcAvg
-
-					;--------------Say goodbye------------------------
- 00000096  68 00000363 R		push	OFFSET goodbye
- 0000009B  E8 0000016A			call	farewell
 
 					exit	; exit to operating system
- 000000A0  6A 00	   *	    push   +000000000h
- 000000A2  E8 00000000 E   *	    call   ExitProcess
- 000000A7			main ENDP
+ 00000045  6A 00	   *	    push   +000000000h
+ 00000047  E8 00000000 E   *	    call   ExitProcess
+ 0000004C			main ENDP
 
-
-				;---------------------------------------------------------
-				; introduction
-				;
-				; Introduces the programmer and how to use the program.
-				; Receives: @intro and @how_to on the stack
-				; Returns: none
-				; Requires: none
-				;---------------------------------------------------------
- 000000A7			introduction PROC
-					
- 000000A7  55				push	ebp
- 000000A8  8B EC			mov		ebp, esp
-
-					displayString	[ebp + 8]		;The programmer introduction
- 000000AA  52		     1		push	edx
- 000000AB  8B 55 08	     1		mov		edx, [ebp + 8]
- 000000AE  E8 00000000 E     1		call	writeString
- 000000B3  5A		     1		pop		edx
- 000000B4  E8 00000000 E		call	CrLf
- 000000B9  E8 00000000 E		call	CrLf
-					displayString	[ebp + 12]		;The instructions
- 000000BE  52		     1		push	edx
- 000000BF  8B 55 0C	     1		mov		edx, [ebp + 12]
- 000000C2  E8 00000000 E     1		call	writeString
- 000000C7  5A		     1		pop		edx
- 000000C8  E8 00000000 E		call	CrLf
- 000000CD  E8 00000000 E		call	CrLf
-
- 000000D2  5D				pop		ebp			;Clean up the stack
- 000000D3  C2 0008			ret		8
-
- 000000D6			introduction ENDP
-
-
-				;---------------------------------------------------------
-				; readVal
-				;
-				; Gets the user's string of digits and converts the string to numeric, while validating the input.
-				; Receives: OFFSET in_String; SIZEOF in_string (both to be used in the getString macro)
-				; Returns: none
-				; Requires: none
-				;---------------------------------------------------------
- 000000D6			readVal PROC
-					
- 000000D6  55				push	ebp
- 000000D7  8B EC			mov		ebp, esp
- 000000D9  60				pushad
-
- 000000DA				top_of_readVal:
-						
- 000000DA  8B 55 0C				mov		edx, [ebp + 12]		;OFFSET in_String (the address)
- 000000DD  8B 4D 08				mov		ecx, [ebp + 8]		;SIZEOF in_string (the length)
-
-						getString	edx, ecx		;Use getString macro (string ends up in OFFSET edx)
- 000000E0  52		     1		push	edx				;Save the registers that readString overwrites (from collab website)
- 000000E1  51		     1		push	ecx
- 000000E2  8B D2	     1		mov		edx, edx
- 000000E4  8B C9	     1		mov		ecx, ecx
- 000000E6  E8 00000000 E     1		call	readString
- 000000EB  59		     1		pop		ecx
- 000000EC  5A		     1		pop		edx
-
-						;Get set up for the loop
- 000000ED  8B F2				mov		esi, edx
- 000000EF  B8 00000000				mov		eax, 0
- 000000F4  B9 00000000				mov		ecx, 0
- 000000F9  BB 0000000A				mov		ebx, 10
-
-						;Start looping through the string, validating as you go
- 000000FE					begin_val_loop:
-							
- 000000FE  AC						lodsb						;From chapter 9
- 000000FF  66| 83 F8 00					cmp		ax, 0				;If equal, we'vereached the null terminator: we're done
- 00000103  74 3B					je		end_of_readVal
-
-							;Figure out if the byte is valid (i.e. in ASCII int range)
- 00000105  66| 83 F8 30					cmp		ax, 48
- 00000109  72 11					jb		not_valid		;Less than ASCII 0
- 0000010B  66| 83 F8 39					cmp		ax, 57
- 0000010F  77 0B					ja		not_valid		;More than ASCII 9
-
-							;If you got to here, the input is valid: convert to digit
- 00000111  66| 83 E8 30					sub		ax, 48
- 00000115  91						xchg	eax, ecx		;Stick char value in ecx
- 00000116  F7 E3					mul		ebx				;Adjust for placement
- 00000118  72 02					jc		not_valid		;Num too big - it overflowed
- 0000011A  EB 1F					jmp		is_valid		;Didn't overflow - keep going
-
-
- 0000011C				not_valid:
-						
-						displayString	OFFSET error_msg		;The error message
- 0000011C  52		     1		push	edx
- 0000011D  BA 000001F3 R     1		mov		edx, OFFSET error_msg
- 00000122  E8 00000000 E     1		call	writeString
- 00000127  5A		     1		pop		edx
- 00000128  E8 00000000 E			call	CrLf
-						displayString	OFFSET prompt_msg		;The prompt for input
- 0000012D  52		     1		push	edx
- 0000012E  BA 000001CD R     1		mov		edx, OFFSET prompt_msg
- 00000133  E8 00000000 E     1		call	writeString
- 00000138  5A		     1		pop		edx
- 00000139  EB 9F				jmp		top_of_readVal					;Bad input, start over
-
-
- 0000013B				is_valid:
-						
- 0000013B  03 C1				add		eax, ecx			;Add the valid digit to the total
- 0000013D  91					xchg	eax, ecx			;Set up for next loop iteration
- 0000013E  EB BE				jmp		begin_val_loop
-
-
- 00000140				end_of_readVal:
-
- 00000140  91					xchg	ecx, eax
- 00000141  A3 00000264 R			mov		DWORD PTR in_string, eax	;Stick the integer in the address we got passed
-
-					;Clean up the stack
- 00000146  61				popad
- 00000147  5D				pop		ebp
- 00000148  C2 000C			ret		12
-
- 0000014B			readVal ENDP
-
-
-				;---------------------------------------------------------
-				; writeVal
-				;
-				; Takes in an integer and writes it to the screen as a string.
-				; Receives: num	(one index of num_list); out_string (to use in displayString)
-				; Returns: none
-				; Requires: none
-				;---------------------------------------------------------
- 0000014B			writeVal PROC
-
- 0000014B  55				push	ebp
- 0000014C  8B EC			mov		ebp, esp
- 0000014E  60				pushad
-
-					;Set up to loop through the integer by digit
- 0000014F  8B 45 0C			mov		eax, [ebp + 12]		;the integer in [esi]
- 00000152  8B 7D 08			mov		edi, [ebp + 8]		;@out_string
- 00000155  BB 0000000A			mov		ebx, 10
- 0000015A  6A 00			push	0					;To act as a marker on the stack
-
- 0000015C				convert_to_string:
-						
- 0000015C  BA 00000000				mov		edx, 0
- 00000161  F7 F3				div		ebx				;Get to the next digit
- 00000163  83 C2 30				add		edx, 48			;Adjust for the ASCII val of the actual character
- 00000166  52					push	edx
-
-						;Check if you're at the end of the number; else continue converting
- 00000167  83 F8 00				cmp		eax, 0
- 0000016A  75 F0				jne		convert_to_string
-
-					;Put the chars into the output string
- 0000016C				stick_in_string:
- 0000016C  8F 07				pop		[edi]
- 0000016E  8B 07				mov		eax, [edi]
- 00000170  47					inc		edi
- 00000171  83 F8 00				cmp		eax, 0		;Make sure you're not at the end of the num before you continue popping
- 00000174  75 F6				jne		stick_in_string
-
-					;Finally, print the dang string
- 00000176  8B 55 08			mov		edx, [ebp + 8]
-					displayString	OFFSET out_string
- 00000179  52		     1		push	edx
- 0000017A  BA 00000244 R     1		mov		edx, OFFSET out_string
- 0000017F  E8 00000000 E     1		call	writeString
- 00000184  5A		     1		pop		edx
-					displayString	OFFSET spaces
- 00000185  52		     1		push	edx
- 00000186  BA 0000023C R     1		mov		edx, OFFSET spaces
- 0000018B  E8 00000000 E     1		call	writeString
- 00000190  5A		     1		pop		edx
-
-
- 00000191  61				popad
- 00000192  5D				pop		ebp
- 00000193  C2 0008			ret		8
-
- 00000196			writeVal ENDP
-
-
-
-
-				;---------------------------------------------------------
-				; calcSum
-				;
-				; Calculates and displays the sum of the user's entered numbers.
-				; Receives: @num_list; @total_msg; @num_sum
-				; Returns: none
-				; Requires: num_list must contain 10 numbers exactly
-				;---------------------------------------------------------
- 00000196			calcSum PROC
-					
-					;Set up for proc and init variables
- 00000196  55				push	ebp
- 00000197  8B EC			mov		ebp, esp
- 00000199  60				pushad
- 0000019A  8B 75 08			mov		esi, [ebp + 8]		;num_list
- 0000019D  B9 0000000A			mov		ecx, 10				;10 numbers to sum
- 000001A2  8B 55 0C			mov		edx, [ebp + 12]		;total_msg
- 000001A5  B8 00000000			mov		eax, 0
- 000001AA  8B 5D 10			mov		ebx, [ebp+16]
-
-					;Add the 10 numbers together
- 000001AD				begin_sum_loop:
-
- 000001AD  03 06				add		eax, [esi]
- 000001AF  83 C6 04				add		esi, 4
- 000001B2  E2 F9				loop	begin_sum_loop
- 000001B4  89 03				mov		[ebx], eax		;Store the total in num_sum
-
-					;Display the total
-					displayString	[ebp + 12]
- 000001B6  52		     1		push	edx
- 000001B7  8B 55 0C	     1		mov		edx, [ebp + 12]
- 000001BA  E8 00000000 E     1		call	writeString
- 000001BF  5A		     1		pop		edx
- 000001C0  50				push	eax
- 000001C1  68 00000244 R		push	OFFSET out_string
- 000001C6  E8 FFFFFF80			call	writeVal
- 000001CB  E8 00000000 E		call	CrLf
-
- 000001D0  61				popad
- 000001D1  5D				pop		ebp
- 000001D2  C2 000C			ret		12
-
- 000001D5			calcSum ENDP
-
-
-				;---------------------------------------------------------
-				; calcAvg
-				;
-				; Calculates and displays the average of the user's entered numbers.
-				; Receives: @avg_msg; @num_sum
-				; Returns: none
-				; Requires: num_list must contain 10 numbers exactly
-				;---------------------------------------------------------
- 000001D5			calcAvg PROC
-					;Set up for proc and init variables
- 000001D5  55				push	ebp
- 000001D6  8B EC			mov		ebp, esp
- 000001D8  60				pushad
- 000001D9  8B 45 0C			mov		eax, [ebp + 12]		;num_sum
- 000001DC  BB 0000000A			mov		ebx, 10				;Should have 10 numbers
- 000001E1  8B 55 08			mov		edx, [ebp + 8]		;avg_msg
-
-					;Display the info
-					displayString	[ebp + 8]
- 000001E4  52		     1		push	edx
- 000001E5  8B 55 08	     1		mov		edx, [ebp + 8]
- 000001E8  E8 00000000 E     1		call	writeString
- 000001ED  5A		     1		pop		edx
-					
-					;Do the division
- 000001EE  BA 00000000			mov		edx, 0
- 000001F3  F7 F3			div		ebx
-
-					;Display with writeVal
- 000001F5  50				push	eax
- 000001F6  68 00000244 R		push	OFFSET out_string
- 000001FB  E8 FFFFFF4B			call	writeVal
- 00000200  E8 00000000 E		call	CrLf
-
-
- 00000205  61				popad
- 00000206  5D				pop		ebp
- 00000207  C2 0008			ret		8
-
- 0000020A			calcAvg ENDP
-
-
-
-
-
-				;---------------------------------------------------------
-				; farewell
-				;
-				; Says goodbye to the user.
-				; Receives: @goodbye on the stack
-				; Returns: none
-				; Requires: none
-				;---------------------------------------------------------
- 0000020A			farewell PROC
-					
- 0000020A  55				push	ebp
- 0000020B  8B EC			mov		ebp, esp
-					
- 0000020D  E8 00000000 E		call	CrLf
-					displayString OFFSET goodbye
- 00000212  52		     1		push	edx
- 00000213  BA 00000363 R     1		mov		edx, OFFSET goodbye
- 00000218  E8 00000000 E     1		call	writeString
- 0000021D  5A		     1		pop		edx
- 0000021E  E8 00000000 E		call	CrLf
- 00000223  E8 00000000 E		call	CrLf
-
- 00000228  5D				pop		ebp
- 00000229  C2 0004			ret		4
-
- 0000022C			farewell ENDP
-
-
-
-
-
-
+				; (insert additional procedures here)
 
 				END main
-Microsoft (R) Macro Assembler Version 14.00.23506.0	    03/09/16 21:44:19
-0Macros, Values, and Strings    (project_06a.asm	     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.00.23506.0	    01/20/16 13:41:05
+#Program Template     (template.asm			     Symbols 2 - 1
 
 
-
-
-Macros:
-
-                N a m e                 Type
-
-displayString  . . . . . . . . .	Proc
-getString  . . . . . . . . . . .	Proc
 
 
 Structures and Unions:
@@ -721,8 +171,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000038D Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000022C Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000000A Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000004C Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -829,25 +279,12 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-calcAvg  . . . . . . . . . . . .	P Near	 000001D5 _TEXT	Length= 00000035 Public STDCALL
-calcSum  . . . . . . . . . . . .	P Near	 00000196 _TEXT	Length= 0000003F Public STDCALL
-  begin_sum_loop . . . . . . . .	L Near	 000001AD _TEXT	
-farewell . . . . . . . . . . . .	P Near	 0000020A _TEXT	Length= 00000022 Public STDCALL
-introduction . . . . . . . . . .	P Near	 000000A7 _TEXT	Length= 0000002F Public STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A7 Public STDCALL
-  begin_input_loop . . . . . . .	L Near	 00000019 _TEXT	
-  begin_display_loop . . . . . .	L Near	 0000005B _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004C Public STDCALL
+  start_loop . . . . . . . . . .	L Near	 00000005 _TEXT	
+  print_star . . . . . . . . . .	L Near	 00000024 _TEXT	
+  loop_cmd . . . . . . . . . . .	L Near	 0000002E _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-readVal  . . . . . . . . . . . .	P Near	 000000D6 _TEXT	Length= 00000075 Public STDCALL
-  top_of_readVal . . . . . . . .	L Near	 000000DA _TEXT	
-  begin_val_loop . . . . . . . .	L Near	 000000FE _TEXT	
-  not_valid  . . . . . . . . . .	L Near	 0000011C _TEXT	
-  is_valid . . . . . . . . . . .	L Near	 0000013B _TEXT	
-  end_of_readVal . . . . . . . .	L Near	 00000140 _TEXT	
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
-writeVal . . . . . . . . . . . .	P Near	 0000014B _TEXT	Length= 0000004B Public STDCALL
-  convert_to_string  . . . . . .	L Near	 0000015C _TEXT	
-  stick_in_string  . . . . . . .	L Near	 0000016C _TEXT	
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 
 
@@ -937,7 +374,6 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-MAX  . . . . . . . . . . . . . .	Number	 FFFFFFFFh   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -963,7 +399,6 @@ MB_USERICON  . . . . . . . . . .	Number	 00000080h
 MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h   
 MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
-MIN  . . . . . . . . . . . . . .	Number	 00000000h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
@@ -1066,19 +501,13 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-avg_msg  . . . . . . . . . . . .	Byte	 000001AA _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-error_msg  . . . . . . . . . . .	Byte	 000001F3 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-goodbye  . . . . . . . . . . . .	Byte	 00000363 _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-how_to . . . . . . . . . . . . .	Byte	 0000004B _DATA	
-in_string  . . . . . . . . . . .	Byte	 00000264 _DATA	
-intro  . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -1086,15 +515,10 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-num_list . . . . . . . . . . . .	DWord	 00000135 _DATA	
-num_sum  . . . . . . . . . . . .	DWord	 00000240 _DATA	
-nums_msg . . . . . . . . . . . .	Byte	 00000220 _DATA	
-out_string . . . . . . . . . . .	Byte	 00000244 _DATA	
-prompt_msg . . . . . . . . . . .	Byte	 000001CD _DATA	
+print_to . . . . . . . . . . . .	DWord	 00000004 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-spaces . . . . . . . . . . . . .	Byte	 0000023C _DATA	
-test_list  . . . . . . . . . . .	DWord	 0000015D _DATA	
-total_msg  . . . . . . . . . . .	Byte	 00000185 _DATA	
+star . . . . . . . . . . . . . .	Byte	 00000008 _DATA	
+tracker  . . . . . . . . . . . .	DWord	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
